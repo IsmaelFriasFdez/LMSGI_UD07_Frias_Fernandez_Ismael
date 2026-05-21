@@ -87,3 +87,22 @@ docker exec \-i db pg\_restore \-U odoo \-d odoo \-1 \< /ruta/segura/backups/arc
 
 3\. Reiniciar el ERP  
 docker compose start odoo
+# **5\. Flujo Operativo de Facturación e Informes**
+
+Esta sección explica la arquitectura de renderizado de Odoo para la depuración técnica y el flujo de trabajo del usuario final.
+
+## **5.1 Generación de Facturas en Interfaz**
+
+1. **Navegación:** En el menú principal de Odoo, acceder al módulo de *Facturación* y seleccionar *Nueva Factura*.  
+2. **Cabecera:** Seleccionar el cliente. Odoo autocompletará la posición fiscal, NIF y términos de pago.  
+3. **Líneas de Factura:** Añadir los productos, cantidades y precios. Los impuestos se calculan dinámicamente.  
+4. **Confirmación:** Al pulsar **Confirmar**, el asiento contable se publica y se asigna un número de factura inmutable.  
+5. **Descarga:** Hacer clic en **Imprimir \> Factura**.
+
+## **5.2 El Pipeline de Renderizado a PDF (wkhtmltopdf)**
+
+Odoo utiliza una arquitectura específica para transformar los datos de la base de datos en un documento PDF imprimible:
+
+1. **Extracción (QWeb):** El motor de plantillas de Odoo (QWeb) extrae los datos de PostgreSQL y genera un documento XML/HTML dinámico.  
+2. **Renderizado HTML:** El sistema combina estos datos con los estilos CSS de la compañía.  
+3. **Conversión Binaria (wkhtmltopdf):** Odoo envía este HTML renderizado a la librería del sistema wkhtmltopdf (incluida dentro de la imagen oficial de Odoo). Esta herramienta utiliza el motor WebKit para renderizar el HTML exactamente como lo haría un navegador web y lo empaqueta en un archivo PDF que se descarga en el equipo del usuario.
