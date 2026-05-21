@@ -59,3 +59,31 @@ Para proteger el acceso a la interfaz web (puerto 8200), se deben aplicar las si
 * **Longitud mínima:** 12 caracteres.  
 * **Complejidad:** Uso combinado de mayúsculas, minúsculas, números y símbolos.  
 * **Rotación:** Cambio cada 90 días.
+# **4\. Procedimiento de Backup y Restauración**
+
+Dado que la base de datos PostgreSQL se encuentra contenerizada bajo el nombre db y el usuario/base de datos están definidos como odoo, las operaciones de volcado de datos deben realizarse a través del cliente de Docker.
+
+## **4.1 Creación de Backup (Respaldo)**
+
+Para extraer una copia de seguridad en caliente (sin detener el ERP):
+
+docker exec \-t \<nombre\_contenedor\> pg\_dump \-U \<usuario\> \<nombre\_bd\> \> /ruta/en/tu/host/backup.sql
+
+Ejemplo:  
+docker exec \-t postgres-db pg\_dump \-U postgres mi\_base\_datos \> ./backup/mi\_base\_datos.sql
+
+## **4.2 Restauración del Sistema (Restore)**
+
+Para restaurar una copia de seguridad ante un desastre:
+
+1\. Eliminar la base de datos actual (requiere detener el contenedor Odoo primero)
+
+docker compose stop odoo  
+docker exec \-it db dropdb \-U odoo odoo  
+docker exec \-it db createdb \-U odoo odoo
+
+2\. Restaurar el backup:  
+docker exec \-i db pg\_restore \-U odoo \-d odoo \-1 \< /ruta/segura/backups/archivo\_backup.dump
+
+3\. Reiniciar el ERP  
+docker compose start odoo
