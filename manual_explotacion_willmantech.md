@@ -38,3 +38,24 @@ El sistema utiliza un archivo **docker-compose.yml** que define automáticamente
      
 3. Verificar que los contenedores odoo y db están en ejecución: ***docker compose ps***  
 4. Acceder a la plataforma a través del navegador web usando la IP del servidor y el puerto definido: ***http://\<IP\_SERVIDOR\>:8200*** o ***localhost:8200***
+# **3\. Seguridad y Control de Acceso**
+
+La gestión de accesos se fundamenta en el modelo de Control de Acceso Basado en Roles (RBAC) propio de Odoo.
+
+## **3.1 Roles y Privilegios**
+
+| Rol | Privilegios sobre la Información |
+| :---- | :---- |
+| **Administrador** | Acceso total a los ajustes de Odoo, instalación de *addons*, gestión de usuarios y acceso a todos los módulos. |
+| **Contable** | Lectura/Escritura en módulos financieros. Acceso en modo lectura a Ventas e Inventario para validación de ingresos/costes. |
+| **Comercial** | Lectura/Escritura limitada a sus propios clientes y presupuestos. Sin acceso a la configuración del sistema ni a la contabilidad general. |
+
+#### 
+
+## **3.2 Políticas de Contraseñas**
+
+Para proteger el acceso a la interfaz web (puerto 8200), se deben aplicar las siguientes reglas organizativas para todos los usuarios:
+
+* **Longitud mínima:** 12 caracteres.  
+* **Complejidad:** Uso combinado de mayúsculas, minúsculas, números y símbolos.  
+* **Rotación:** Cambio cada 90 días.
